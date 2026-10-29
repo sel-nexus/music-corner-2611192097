@@ -26,6 +26,13 @@ test('visitor explores the sample storefront and enters an email without submitt
   await expect(collection.getByText('$16.00')).toBeVisible();
   await expect(collection.getByText(/fictional examples/i)).toBeVisible();
 
+  await page.getByRole('link', { name: /music corner home/i }).click();
+  await expect(page).toHaveURL(/#top$/);
+  await page.getByRole('link', { name: 'The collection' }).click();
+  await expect(page).toHaveURL(/#collection$/);
+  await expect(collection).toBeVisible();
+  await expect(collection.getByRole('article')).toHaveCount(3);
+
   await page.getByRole('link', { name: 'Find us' }).click();
   await expect(page.getByRole('contentinfo').getByText(/Fictional demo store details/)).toBeVisible();
   await expect(page.getByRole('contentinfo').getByRole('link', { name: 'hello@musiccorner.example' })).toBeVisible();
@@ -36,6 +43,9 @@ test('visitor explores the sample storefront and enters an email without submitt
   await expect(email).toHaveValue('listener@example.com');
   await expect(page.getByText(/does not subscribe or send anything/i)).toBeVisible();
   await expect(page.getByRole('button', { name: /subscribe|sign up|send/i })).toHaveCount(0);
+  await page.getByRole('link', { name: 'The collection' }).click();
+  await expect(collection).toBeVisible();
+  await page.screenshot({ path: 'test-results/music-corner-collection.png', fullPage: true });
   expect(errors).toEqual([]);
 });
 
@@ -46,9 +56,25 @@ test('storefront has a usable small-screen layout and descriptive accessibility 
   });
   page.on('pageerror', (error) => errors.push(error.message));
 
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome to Music Corner.' })).toBeVisible();
+  const desktopAccessibility = await page.locator('body').ariaSnapshot();
+  expect(desktopAccessibility).toContain('Welcome to Music Corner');
+  const desktopStyles = await page.evaluate(() => ({
+    fontFamily: getComputedStyle(document.body).fontFamily,
+    pageBackground: getComputedStyle(document.body).backgroundColor,
+    themePreference: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+  }));
+  expect(desktopStyles.fontFamily).toContain('DM Sans');
+  expect(desktopStyles.pageBackground).toBe(desktopStyles.themePreference === 'dark' ? 'rgb(32, 31, 29)' : 'rgb(247, 243, 235)');
+  await page.screenshot({ path: 'test-results/music-corner-desktop.png', fullPage: true });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole('heading', { name: 'Welcome to Music Corner.' })).toBeVisible();
+  const mobileAccessibility = await page.locator('body').ariaSnapshot();
+  expect(mobileAccessibility).toContain('Your email address');
+  await page.screenshot({ path: 'test-results/music-corner-mobile.png', fullPage: true });
   await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Your email address' })).toBeVisible();
 

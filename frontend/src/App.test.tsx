@@ -59,6 +59,25 @@ describe('Music Corner storefront', () => {
     expect(screen.queryByRole('button', { name: /subscribe|sign up|send/i })).not.toBeInTheDocument();
   });
 
+  it('uses native email validity for empty, malformed, and valid values without submitting', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const email = screen.getByRole('textbox', { name: 'Your email address' }) as HTMLInputElement;
+    expect(email.validity.valid).toBe(true);
+    expect(email.validity.valueMissing).toBe(false);
+
+    await user.type(email, 'not-an-email');
+    expect(email.validity.typeMismatch).toBe(true);
+    expect(email.validity.valid).toBe(false);
+
+    await user.clear(email);
+    await user.type(email, 'listener@example.com');
+    expect(email.validity.typeMismatch).toBe(false);
+    expect(email.validity.valid).toBe(true);
+    expect(screen.queryByRole('button', { name: /subscribe|sign up|send/i })).not.toBeInTheDocument();
+  });
+
   it('keeps the collection destination present for keyboard and direct navigation', () => {
     render(<App />);
 

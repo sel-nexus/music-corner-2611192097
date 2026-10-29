@@ -21,6 +21,7 @@ test_report.yaml
 graphify-out/cache/
 graphify-out/cost.json
 frontend/test-results/
+frontend/hosting-test-results/
 frontend/playwright-report/
 frontend/e2e-results.json
 frontend/hosting-e2e-results.json
