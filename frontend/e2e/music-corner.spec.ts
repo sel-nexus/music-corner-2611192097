@@ -57,6 +57,11 @@ test('storefront has a usable small-screen layout and descriptive accessibility 
     documentWidth: document.documentElement.scrollWidth,
     bodyFont: getComputedStyle(document.body).fontFamily,
   }));
+  const overflow = await page.evaluate(() => Array.from(document.querySelectorAll('body *')).map((element) => {
+    const rect = element.getBoundingClientRect();
+    return { tag: element.tagName, className: typeof element.className === 'string' ? element.className : '', left: Math.round(rect.left), right: Math.round(rect.right) };
+  }).filter((element) => element.right > document.documentElement.clientWidth + 1 || element.left < -1));
+  expect(overflow).toEqual([]);
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
   expect(dimensions.bodyFont).toContain('DM Sans');
   const structure = await page.content();

@@ -28,7 +28,7 @@ const releases = [
 /** Render the Music Corner sample storefront. */
 export default function App() {
   return (
-    <main>
+    <>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="Music Corner home">
           <span className="wordmark-mark" aria-hidden="true">M</span>
@@ -41,6 +41,7 @@ export default function App() {
         <a className="header-note" href="#newsletter">A note from us <span aria-hidden="true">↗</span></a>
       </header>
 
+      <main>
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="hero-copy">
           <p className="hero-kicker"><span className="sound-mark" aria-hidden="true">♪</span> A little record shop for everyone</p>
@@ -108,6 +109,8 @@ export default function App() {
         </div>
       </section>
 
+      </main>
+
       <footer className="site-footer section-wrap" id="visit">
         <div className="footer-brand">
           <a className="wordmark" href="#top">
@@ -133,6 +136,6 @@ export default function App() {
         <p className="footer-disclaimer">Fictional demo store details. This page is a sample storefront, not a live shop.</p>
         <div className="footer-bottom"><span>Music Corner</span><span>Made for the love of listening</span></div>
       </footer>
-    </main>
+    </>
   );
 }
